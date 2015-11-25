@@ -56,8 +56,10 @@ SRay CTracer::MakeRay(uvec2 pixelPos)
         n_forw = normalize(m_camera.m_forward);
         n_up = normalize(m_camera.m_up);
         n_right = normalize(m_camera.m_right);
-        double x = 2.0 * length(m_camera.m_forward) * tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
-        double y = 2.0 * length(m_camera.m_forward) * tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
+        double x = 2.0 * length(m_camera.m_forward) * 
+            tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
+        double y = 2.0 * length(m_camera.m_forward) * 
+            tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
 
         x *= 0.5 + ppx;
         y *= 0.5 + ppy;

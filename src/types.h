@@ -23,6 +23,13 @@ struct SCamera
   glm::uvec2 m_resolution;  // Image resolution: w, h
 
   std::vector<glm::dvec3> m_pixels;  // Pixel array
+  void DefaultInit();
+  void ParseSettings(FILE *);
+private:
+  inline void IgnoreLine(FILE *);
+  void CheckBasis();
+  void CheckSize();
+  void CheckResolution(int,int);
 };
 
 struct SMesh
