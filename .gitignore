@@ -1,0 +1,8 @@
+*.o
+*.png
+build/
+bin/
+.*.swp
+tests/
+utils/
+
