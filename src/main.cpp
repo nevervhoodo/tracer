@@ -24,13 +24,13 @@ int main(int argc, char** argv)
         // tracer.m_camera.m_resolution = uvec2(1024,768);  // Default resolutio
         // tracer.m_camera.m_pixels.resize(1024*768);
         
-        int xRes = 1028;  // Default resolution
-        int yRes = 720;
-        tracer.m_camera.m_pos = dvec3(4.5e+10,0,0.2e+11);          // Camera position and orientation
-        tracer.m_camera.m_forward = dvec3(-20,0,-1);
-        tracer.m_camera.m_right = dvec3(0,-1,0);
+        int xRes = 512;  // Default resolution
+        int yRes = 512;
+        tracer.m_camera.m_pos = dvec3(0,0,0);          // Camera position and orientation
+        tracer.m_camera.m_forward = dvec3(1 ,0, 0);
+        tracer.m_camera.m_right = dvec3(0,1,0);
         //cout<<m_right.x<<" "<<m_right.y<<" "<<m_right.z<<endl;
-        tracer.m_camera.m_up = dvec3(-1,0,20);
+        tracer.m_camera.m_up = dvec3(0 ,0, 1);
         // double norm = pow(length(tracer.m_camera.m_forward),2);
         // norm += pow(length(tracer.m_camera.m_up),2);
         // norm += pow(length(tracer.m_camera.m_right),2);
@@ -39,9 +39,9 @@ int main(int argc, char** argv)
         // tracer.m_camera.m_forward /= double(norm);
         // tracer.len_forward = norm;
         //cout<<m_up.x<<" "<<m_up.y<<" "<<m_up.z<<endl;
-        tracer.m_camera.m_viewAngle = dvec2(30/180*2*M_PI,16.875*2/180*M_PI);    // View angles, rad
-        tracer.m_camera.m_resolution = uvec2(1028,720); 
-        tracer.m_camera.m_pixels.resize(1028*720);
+        tracer.m_camera.m_viewAngle = dvec2(30.0/180*M_PI,30.0/180*M_PI);    // View angles, rad
+        tracer.m_camera.m_resolution = uvec2(512,512); 
+        tracer.m_camera.m_pixels.resize(512 * 512);
 
 // 4.5e+11 0 0.2e+11
 // -20 0 -1

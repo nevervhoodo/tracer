@@ -46,15 +46,27 @@ dvec3 CTracer::FoundDisk(SRay ray)
 
 SRay CTracer::MakeRay(uvec2 pixelPos)
 {
+        double ppx = double(pixelPos.x) - m_camera.m_resolution.x / 2.0;
+        double ppy = double(pixelPos.y) - m_camera.m_resolution.y / 2.0;
+
         dvec3 n_forw, n_up, n_right;
         SRay ray;
         n_forw = normalize(m_camera.m_forward);
-        n_up = double(m_camera.m_resolution.y)*normalize(m_camera.m_up);
-        n_right = normalize(m_camera.m_right)*double(m_camera.m_resolution.x);
-        double x = (pixelPos.x+0.5)/m_camera.m_resolution.x-0.5;
-        double y = (pixelPos.y+0.5)/m_camera.m_resolution.y-0.5;
-        ray.m_dir= m_camera.m_forward + n_right*double(x) + n_up*double(y);
-        ray.m_start=m_camera.m_pos;
+        n_up = normalize(m_camera.m_up);
+        n_right = normalize(m_camera.m_right);
+        double x = 2.0 * length(m_camera.m_forward) * tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
+        double y = 2.0 * length(m_camera.m_forward) * tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
+
+        x *= 0.5 + ppx;
+        y *= 0.5 + ppy;
+
+        ray.m_start = m_camera.m_forward;
+        ray.m_start += x * n_right;
+        ray.m_start += y * n_up;
+
+
+        ray.m_dir = normalize(ray.m_start);
+        ray.m_start += m_camera.m_pos;
         return ray;
 }
 
@@ -138,15 +150,6 @@ void CTracer::SaveImageToFile(std::string fileName)
         for (i = 0; i < height; i++) {
                 for (j = 0; j < width; j++) {
                         dvec3 color = m_camera.m_pixels[textureDisplacement + j];
-                        
-                        /* Я не знаю, что должно выйти по задумке. Этот вариант
-                         * больше похож на правду, но оставлю авторский раскомментированным.
-                         */
-                        /*
-                        image(j, i, 0) = color[0];
-                        image(j, i, 1) = color[1];
-                        image(j, i, 2) = color[2];
-                        */
                         
                         image(j, i, 0) = clamp(color[0], 0.0, 1.0) * 255.0;
                         image(j, i, 1) = clamp(color[1], 0.0, 1.0) * 255.0;
