@@ -2,6 +2,7 @@
 #include "glmextra.hpp"
 
 #include <iostream>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 using namespace glm;
@@ -12,10 +13,11 @@ using namespace std;
 
 dvec3 CTracer::MakeSky (dvec3 ray_pos)
 {
+        ray_pos = normalize(ray_pos);
         if (DEBUG2)
                 cout<<ray_pos.x<<" "<<
                 ray_pos.y<<" "<<ray_pos.z<<endl;
-        long double dphi,dteta;
+        double dphi,dteta;
         uint phi, teta;
         if (length(ray_pos)>PRECISION)
                 ray_pos = normalize(ray_pos);
@@ -32,11 +34,11 @@ dvec3 CTracer::MakeSky (dvec3 ray_pos)
                 cout<<dteta<<" "<<
                 dphi<<" "<<teta<<" "<<phi<<
                 " "<<endl;
-        uint8_t r = stars(teta, phi, 0);
-        uint8_t g = stars(teta, phi, 1);
-        uint8_t b = stars(teta, phi, 2);
+        uint8_t r = stars(phi, teta, 0);
+        uint8_t g = stars(phi, teta, 1);
+        uint8_t b = stars(phi, teta, 2);
         //uint8_t a = stars(j, i, 3);
-        return dvec3(r,g,b);
+        return dvec3(r,g,b) / 255.0;
 }
 
 dvec3 CTracer::FoundDisk(SRay ray)
@@ -72,7 +74,7 @@ SRay CTracer::MakeRay(uvec2 pixelPos)
 
 glm::dvec3 CTracer::TraceRay(SRay ray)
 {
-        return ray.m_dir;
+        // return ray.m_dir;
 
         dvec3 a,v,tmpv;
         dvec3 color;
