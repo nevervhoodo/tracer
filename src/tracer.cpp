@@ -60,6 +60,8 @@ SRay CTracer::MakeRay(uvec2 pixelPos)
 
 glm::dvec3 CTracer::TraceRay(SRay ray)
 {
+        return ray.m_dir;
+
         dvec3 a,v,tmpv;
         dvec3 color;
         double tmp;
