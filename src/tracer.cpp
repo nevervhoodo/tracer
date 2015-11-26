@@ -13,7 +13,10 @@ using namespace std;
 
 dvec3 CTracer::MakeSky (dvec3 ray_pos)
 {
-        ray_pos = normalize(ray_pos);
+        if (length(ray_pos)>PRECISION)
+                ray_pos = normalize(ray_pos);
+        else
+                cout<<"sky"<<endl;
         if (DEBUG2)
                 cout<<ray_pos.x<<" "<<
                 ray_pos.y<<" "<<ray_pos.z<<endl;
@@ -41,9 +44,50 @@ dvec3 CTracer::MakeSky (dvec3 ray_pos)
         return dvec3(r,g,b) / 255.0;
 }
 
-dvec3 CTracer::FoundDisk(SRay ray)
+bool CTracer::FoundDisk(SRay ray, dvec3 &color)
 {
+        double dt = -ray.m_start.z/ray.m_dir.z;
+        double rad;
+        dvec2 coord;
+        uint i,j;
+        if ((dt>PRECISION)&&(dt<=dtime))
+        {
+                ray.m_start += ray.m_dir*double(dt);
+                rad = sqrt(ray.m_start.x*ray.m_start.x + 
+                        ray.m_start.y*ray.m_start.y); 
+                if (rad <= raddisk )
+                {
+                        coord = dvec2(ray.m_start.x,ray.m_start.y);
+                        coord /= (double)raddisk;
+                        coord *= (double)diskrad;
+                        i = coord.x;
+                        j = coord.y;
+                        uint8_t r = disk(i, j, 0);
+                        uint8_t g = disk(i, j, 1);
+                        uint8_t b = disk(i, j, 2);
+                        uint8_t a = disk(i, j, 3);
+                        if (a)
+                        {
+                                color = dvec3(r,g,b) / 255.0;
+                                return true;
+                        }
+                }
+        }
+        return false;
+}
 
+bool CTracer::BlackHole(SRay ray)
+{
+        double r1,r2;
+        r1 = ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
+                + ray.m_start.z*ray.m_start.z;
+        ray.m_start += ray.m_dir;
+        r2 = ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
+                + ray.m_start.z*ray.m_start.z; 
+        if ((r1>radhole)^(r2>radhole))
+                return true;
+        else
+                return false;
 }
 
 SRay CTracer::MakeRay(uvec2 pixelPos)
@@ -53,7 +97,7 @@ SRay CTracer::MakeRay(uvec2 pixelPos)
 
         dvec3 n_forw, n_up, n_right;
         SRay ray;
-        n_forw = normalize(m_camera.m_forward);
+        
         n_up = normalize(m_camera.m_up);
         n_right = normalize(m_camera.m_right);
         double x = 2.0 * length(m_camera.m_forward) * 
@@ -78,32 +122,36 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
 {
         // return ray.m_dir;
 
-        dvec3 a,v,tmpv;
-        dvec3 color;
-        double tmp;
-        double dt;
-        ray.m_dir=normalize(ray.m_dir)*dvec3(VC,VC,VC);
-        /*for (int iter;iter<1000;iter++)
+        dvec3 a,v,change;
+        dvec3 color = dvec3(0.0,0.0,0.0);
+        if (length(ray.m_dir)>PRECISION)
+                ray.m_dir = normalize(ray.m_dir);
+        else
+                cout<<"tracer0"<<endl;
+        for (int iter;iter<100000;iter++)
         //for (;;)
         {
-                tmp = coeff/pow(length(ray.m_start),3);
-                a = perp(ray.m_start*dvec3(tmp,tmp,tmp),ray.m_dir);
-                tmpv = ray.m_dir*dvec3(dtime,dtime,dtime)+
-                        a*dvec3(dtime*dtime/2,dtime*dtime/2,dtime*dtime/2);
-                if (length(tmpv)<10)
+                a = perp(ray.m_start*double(coeff/pow(length(ray.m_start),3)),
+                    ray.m_dir);
+                change = ray.m_dir*double(dtime)+a*double(dtime*dtime/2.0);
+                if (length(change)<0.01)
                 {
                         return MakeSky(ray.m_dir+ray.m_start);
                 }
-                ray.m_start+=tmpv;
-                ray.m_dir+=a*dvec3(dtime,dtime,dtime);
+                ray.m_start+=change;
+                ray.m_dir+=a*double(dtime);
                 if (length(ray.m_dir)>PRECISION)
-                ray.m_dir=normalize(ray.m_dir)*dvec3(VC,VC,VC);
-                dt = -ray.m_start.z/ray.m_dir.z;
-                // if ((dt>PRECISION)&&(dt<=1))
-                //         return FoundDisk(ray);
-        }*/
-        //return dvec3(1,0,1);
-        return MakeSky(ray.m_dir);
+                        ray.m_dir = normalize(ray.m_dir);
+                else
+                        cout<<"tracer"<<endl;
+                ray.m_dir=normalize(ray.m_dir)*double(VC);
+                if (BlackHole(ray))
+                        return color;
+                if (FoundDisk(ray,color))
+                        return color;       
+        }
+        return dvec3(1,0,1);
+        //return MakeSky(ray.m_dir);
 }
 
 void CTracer::RenderImage(int xRes, int yRes)
@@ -112,10 +160,11 @@ void CTracer::RenderImage(int xRes, int yRes)
         //CImage* pImage = LoadImageFromFile("data/disk_32.png");
 
         mass = 8.57e+36f; //default !!
-        radhole = GCONST*2*mass/VC/VC;
+        radhole = GCONST*2.0*mass/VC/VC;
         coeff = GCONST*mass;
-
+        raddisk = radhole * 10.0; //!CONFIG
         disk = CImage("data/disk_32.png");
+        diskrad = fmin(disk.height(),disk.width());
         stars = CImage("data/stars.jpg");
         /*for (int i = 0; i < img.height(); i++) { // Image lines
                 for(int j = 0; j < img.width(); j++) { // Pixels in line

@@ -21,7 +21,8 @@ class CTracer
 	CImage stars, disk;
 	double mass, raddisk, radhole;
 	double coeff;
-	double dtime = 0.001;
+	double dtime = 200.0;
+        uint diskrad;
 public:
         SRay MakeRay(glm::uvec2 pixelPos);  // Create ray for specified pixel
         glm::dvec3 TraceRay(SRay ray); // Trace ray, compute its color
@@ -29,7 +30,8 @@ public:
         void SaveImageToFile(std::string fileName);
         CImage* LoadImageFromFile(std::string fileName);
         glm::dvec3 MakeSky (glm::dvec3 ray_pos);
-        glm::dvec3 FoundDisk(SRay ray);
+        bool FoundDisk(SRay ray, glm::dvec3 &color);
+        bool BlackHole(SRay ray);
 public:
 	// double len_forward;
         SCamera m_camera;
