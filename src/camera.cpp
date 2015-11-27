@@ -70,7 +70,7 @@ void SCamera::DefaultInit()
     m_up = dvec3(0.0,0.0,10.0); 
     //cout<<m_up.x<<" "<<m_up.y<<" "<<m_up.z<<endl;
     m_viewAngle = dvec2(30.0/180.0*M_PI,30.0/180.0*M_PI);    // View angles, rad
-    m_resolution = uvec2(20,20);  // Default resolutio
+    m_resolution = uvec2(512,512);  // Default resolutio
     m_pixels.resize(m_resolution.x*m_resolution.y);  // Pixel array
 }
 
