@@ -63,14 +63,14 @@ void SCamera::CheckSize()
 void SCamera::DefaultInit()
 {
     //Defaiul settings
-    m_pos = dvec3(5e+11,0.0,2e+10);          // Camera position and orientation
-    m_forward = dvec3(-20,0.0,-1.0);      // Orthonormal basis
+    m_pos = dvec3(3e+11,0.0,2e+10);          // Camera position and orientation
+    m_forward = dvec3(-20,0.0,1.0);      // Orthonormal basis
     m_right = dvec3(0.0,10.0,0.0);
     //cout<<m_right.x<<" "<<m_right.y<<" "<<m_right.z<<endl;
-    m_up = dvec3(0.0,0.0,10.0); 
+    m_up = dvec3(0.0,0.0,-10.0); 
     //cout<<m_up.x<<" "<<m_up.y<<" "<<m_up.z<<endl;
     m_viewAngle = dvec2(30.0/180.0*M_PI,30.0/180.0*M_PI);    // View angles, rad
-    m_resolution = uvec2(512,512);  // Default resolutio
+    m_resolution = uvec2(500,500);  // Default resolutio
     m_pixels.resize(m_resolution.x*m_resolution.y);  // Pixel array
 }
 

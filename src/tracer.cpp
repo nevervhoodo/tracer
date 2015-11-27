@@ -64,7 +64,7 @@ double CTracer::FoundDisk(SRay ray, dvec3 &color)
         uint i,j;
         if ((dt>PRECISION)&&(dt<=dtime))
         {
-                cout<<"here"<<endl;
+                //cout<<"here"<<endl;
                 ray.m_start += ray.m_dir*double(dt);
                 rad = sqrt(ray.m_start.x*ray.m_start.x + 
                         ray.m_start.y*ray.m_start.y); 
@@ -166,8 +166,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
         else
                 cout<<"tracer0"<<endl;
         ray.m_dir *= VC;
-        for (int iter;iter<1000;iter++)
-        //for (;;)
+        //for (int iter;iter<1000;iter++)
+        for (;;)
         {
                 r = length(ray.m_start);
                 a = -coeff/r/r/r * ray.m_start;
@@ -208,8 +208,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                                 return dvec3(0.0,0.0,0.0);
                 else if ((dt>PRECISION)&&(dt<dtime))
                         return color;
-                //else if (r > length(m_camera.m_pos))
-                  //      return MakeSky(ray.m_dir+ray.m_start);
+                else if (r > length(m_camera.m_pos))
+                        return MakeSky(ray.m_dir);
         }
         return dvec3(1,0,1);
         //return MakeSky(ray.m_dir);
