@@ -69,6 +69,7 @@ double CTracer::FoundDisk(SRay ray, dvec3 &color)
                         uint8_t a = disk(i, j, 3);
                         if (a)
                         {
+                                printf("ssssssssss\n");
                                 color = dvec3(r,g,b) / 255.0;
                                 return dt;
                         }
@@ -151,8 +152,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
         else
                 cout<<"tracer0"<<endl;
         ray.m_dir *= VC;
-        //for (int iter;iter<10000;iter++)
-        for (;;)
+        for (int iter;iter<1000;iter++)
+        //for (;;)
         {
                 r = length(ray.m_start);
                 a = -coeff/r/r/r * ray.m_start;
@@ -205,6 +206,8 @@ void CTracer::RenderImage(int xRes, int yRes)
         radhole = GCONST*2.0*mass/VC/VC;
         coeff = GCONST*mass;
         raddisk = radhole * 10.0; //!CONFIG
+        dtime = 10.0;
+
         disk = CImage("data/disk_32.png");
         diskrad = fmin(disk.height(),disk.width());
         stars = CImage("data/stars.jpg");
@@ -225,6 +228,7 @@ void CTracer::RenderImage(int xRes, int yRes)
                 for (int j = 0; j < xRes; j++) {
                         SRay ray = MakeRay(uvec2(j, i));
                         m_camera.m_pixels[i * xRes + j] = TraceRay(ray);
+                        cout << m_camera.m_pixels[i * xRes + j]<<endl;
                 }
         }
 }
