@@ -70,21 +70,23 @@ double CTracer::FoundDisk(SRay ray, dvec3 &color)
                         ray.m_start.y*ray.m_start.y); 
                 if (rad <= raddisk )
                 {
+
                         coord = dvec2(ray.m_start.x,ray.m_start.y);
                         coord /= (double)raddisk;
                         coord *= (double)diskrad;
-                        i = coord.x;
-                        j = coord.y;
-                        uint8_t r = disk(i, j, 0);
+                        i = coord.x + diskrad;
+                        j = coord.y + diskrad;
+                        cout<<"i,j "<<i<<" "<<j<<" "<<diskrad<<endl;
+                        uint8_t r = disk(j, i, 0);
                         uint8_t g = disk(i, j, 1);
                         uint8_t b = disk(i, j, 2);
-                        uint8_t a = disk(i, j, 3);
-                        if (a)
-                        {
+                        //uint8_t a = disk(i, j, 3);
+                        //if (a)
+                        //{
                                 printf("ssssssssss\n");
                                 color = dvec3(r,g,b) / 255.0;
                                 return dt;
-                        }
+                        //}
                 }
         }
         return -1;
@@ -94,7 +96,7 @@ double CTracer::BlackHole(SRay ray)
 {
         double b,c,d,ht;
         double r1,r2;
-        b = length (ray.m_dir) * length (ray.m_dir);
+        b = length (ray.m_dir);//mb -length!!
         c = dot(ray.m_dir,ray.m_dir) - radhole*radhole;
         d = b*b - c;
         if (d>=PRECISION)
@@ -224,8 +226,8 @@ void CTracer::RenderImage(int xRes, int yRes)
         raddisk = radhole * 10.0; //!CONFIG
         dtime = 10.0;
 
-        disk = CImage("data/disk_32.png");
-        diskrad = fmin(disk.height(),disk.width());
+        disk = CImage("data/disk_24.png");
+        diskrad = fmin(disk.height(),disk.width())/2;
         stars = CImage("data/stars.jpg");
         /*for (int i = 0; i < img.height(); i++) { // Image lines
                 for(int j = 0; j < img.width(); j++) { // Pixels in line
