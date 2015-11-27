@@ -10,6 +10,18 @@ using namespace std;
 
 #define DEBUG false
 #define DEBUG2 false
+#define ARAY false
+
+void print (dvec3 v)
+{
+    cout <<"vec is "<<v.x<<" "<<v.y<<" "<<v.z<<endl;
+}
+
+void print(SRay ray)
+{
+        cout<<"ray is "<<ray.m_start.x<<" "<<ray.m_start.y<<" "<<ray.m_start.z<<
+        "; "<<ray.m_dir.x<<" "<<ray.m_dir.y<<" "<<ray.m_dir.z<<endl;
+}
 
 dvec3 CTracer::MakeSky (dvec3 ray_pos)
 {
@@ -82,13 +94,13 @@ double CTracer::BlackHole(SRay ray)
 {
         double b,c,d,ht;
         double r1,r2;
-        b = length (ray.m_dir);//mb -length!!
+        b = length (ray.m_dir) * length (ray.m_dir);
         c = dot(ray.m_dir,ray.m_dir) - radhole*radhole;
-        d = b*b - 4*c;//strange official 
+        d = b*b - c;
         if (d>=PRECISION)
         {   
                 //cout<<"black here"<<endl;
-                ht = fmin((-b + sqrt(d))/2.0,(-b - sqrt(d))/2.0);
+                ht = fmin((-b + sqrt(d)),(-b - sqrt(d)));
                 if ((ht>-PRECISION)&&(ht<=dtime))
                 {
                         cout<<"black surely here"<<endl;
@@ -157,6 +169,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
         {
                 r = length(ray.m_start);
                 a = -coeff/r/r/r * ray.m_start;
+                if (ARAY)
+                    cout<<"a= "<<a.x<<" "<<a.y<<" "<<a.z<<endl;
                 an = perp (a,ray.m_dir);
                 change = dtime*ray.m_dir+an*double(dtime*dtime/2.0);
                 if (length(change)<1000)
@@ -171,6 +185,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 else
                         cout<<"tracer"<<endl;
                 ray.m_dir *= VC;
+                if (ARAY)
+                    print(ray);
 
                 ht = BlackHole(ray);
                 dt = FoundDisk(ray,color);
@@ -228,7 +244,7 @@ void CTracer::RenderImage(int xRes, int yRes)
                 for (int j = 0; j < xRes; j++) {
                         SRay ray = MakeRay(uvec2(j, i));
                         m_camera.m_pixels[i * xRes + j] = TraceRay(ray);
-                        cout << m_camera.m_pixels[i * xRes + j]<<endl;
+                        //cout << m_camera.m_pixels[i * xRes + j]<<endl;
                 }
         }
 }
