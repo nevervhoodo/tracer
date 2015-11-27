@@ -86,7 +86,7 @@ double CTracer::BlackHole(SRay ray)
         d = b*b - 4*c;//strange official 
         if (d>=PRECISION)
         {   
-                cout<<"black here"<<endl;
+                //cout<<"black here"<<endl;
                 ht = fmin((-b + sqrt(d))/2.0,(-b - sqrt(d))/2.0);
                 if ((ht>-PRECISION)&&(ht<=dtime))
                 {
@@ -158,7 +158,7 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 a = -coeff/r/r/r * ray.m_start;
                 an = perp (a,ray.m_dir);
                 change = dtime*ray.m_dir+an*double(dtime*dtime/2.0);
-                if (length(change)<1)
+                if (length(change)<1000)
                 {
                         cout << "happy"<<endl;
                         return MakeSky(ray.m_dir);
@@ -189,8 +189,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                                 return dvec3(0.0,0.0,0.0);
                 else if ((dt>PRECISION)&&(dt<dtime))
                         return color;
-                else if (r > length(m_camera.m_pos))
-                        return MakeSky(ray.m_dir+ray.m_start);
+                //else if (r > length(m_camera.m_pos))
+                  //      return MakeSky(ray.m_dir+ray.m_start);
         }
         return dvec3(1,0,1);
         //return MakeSky(ray.m_dir);
