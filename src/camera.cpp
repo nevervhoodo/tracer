@@ -53,7 +53,7 @@ void SCamera::CheckSize()
         >PRECISION)
     {
         m_resolution.x = (tan(m_viewAngle.y)/tan(m_viewAngle.x)-
-            (m_resolution.x/m_resolution.y))*m_resolution.y;
+        (m_resolution.x/m_resolution.y))*m_resolution.y;
         cout<<"Warning: the width is changed. Now it is "<<m_resolution.x<<endl;
     }
     m_up = m_up * dvec3(m_resolution.y,m_resolution.y,m_resolution.y);   
@@ -63,7 +63,7 @@ void SCamera::CheckSize()
 void SCamera::DefaultInit()
 {
     //Defaiul settings
-    m_pos = dvec3(5e+7,0.0,0.0);          // Camera position and orientation
+    m_pos = dvec3(5e+7,0.0,2e+6);          // Camera position and orientation
     m_forward = dvec3(20,0.0,1.0);      // Orthonormal basis
     m_right = dvec3(0.0,10.0,0.0);
     //cout<<m_right.x<<" "<<m_right.y<<" "<<m_right.z<<endl;

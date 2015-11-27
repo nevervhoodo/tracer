@@ -155,7 +155,23 @@
 			"file": "main.cpp",
 			"settings":
 			{
-				"buffer_size": 1874,
+				"buffer_size": 2937,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "scene.cpp",
+			"settings":
+			{
+				"buffer_size": 19,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "scene.h",
+			"settings":
+			{
+				"buffer_size": 71,
 				"line_ending": "Windows"
 			}
 		},
@@ -168,21 +184,26 @@
 			}
 		},
 		{
+			"file": "glmextra.hpp",
+			"settings":
+			{
+				"buffer_size": 493,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "tracer.cpp",
 			"settings":
 			{
-				"buffer_size": 4500,
+				"buffer_size": 8300,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "#pragma once\n\n#include \"glm/glm.hpp\"\n#include \"types.h\"\n#include \"scene.h\"\n\n#include \"string\"\n#include \"CImg.h\"\n\n#define PRECISION 0.000001\n#define GCONST 6.67384e-11f\n#define VC 3e+8f\n\ntypedef cimg_library::CImg<unsigned char> CImage;\n\nclass CTracer\n{\n		uchar *pStars, *pDisk;\n		float mass, raddisk, radhole;\n		float coeff;\n		float dtime = 0.0001;\npublic:\n        SRay MakeRay(glm::uvec2 pixelPos);  // Create ray for specified pixel\n        glm::vec3 TraceRay(SRay ray); // Trace ray, compute its color\n        void RenderImage(int xRes, int yRes);\n        void SaveImageToFile(std::string fileName);\n        CImage* LoadImageFromFile(std::string fileName);\n\npublic:\n        SCamera m_camera;\n        CScene* m_pScene;\n};\n",
 			"file": "tracer.h",
-			"file_size": 656,
-			"file_write_time": 130928359195150833,
 			"settings":
 			{
-				"buffer_size": 724,
+				"buffer_size": 981,
 				"line_ending": "Windows"
 			}
 		},
@@ -190,32 +211,48 @@
 			"file": "types.h",
 			"settings":
 			{
-				"buffer_size": 575,
+				"buffer_size": 809,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/home/dina/mashgraph/3/Kirill/Task3/src/Tracer.cpp",
+			"file": "/home/dina/mashgraph/3/RayTracer/src/types.h",
 			"settings":
 			{
-				"buffer_size": 4278,
+				"buffer_size": 809,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/home/dina/mashgraph/3/Kirill/Task3/include/Tracer.h",
+			"file": "/home/dina/mashgraph/3/RayTracer/src/tracer.h",
 			"settings":
 			{
-				"buffer_size": 677,
+				"buffer_size": 981,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/home/dina/mashgraph/3/Kirill/Task3/src/Main.cpp",
+			"file": "/home/dina/mashgraph/3/RayTracer/src/tracer.cpp",
 			"settings":
 			{
-				"buffer_size": 1509,
+				"buffer_size": 8300,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/home/dina/mashgraph/3/RayTracer/src/main.cpp",
+			"settings":
+			{
+				"buffer_size": 2937,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/home/dina/mashgraph/3/RayTracer/src/camera.cpp",
+			"settings":
+			{
+				"buffer_size": 4843,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -269,8 +306,15 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/home/dina/mashgraph/3/tracer/src/glm"
+	],
 	"file_history":
 	[
+		"/home/dina/mashgraph/3/Kirill/Task3/src/Tracer.cpp",
+		"/home/dina/mashgraph/3/Kirill/Task3/include/Tracer.h",
+		"/home/dina/mashgraph/3/Kirill/Task3/src/Main.cpp",
 		"/home/dina/mashgraph/3/RayTracer/bin/errs.txt",
 		"/home/dina/mashgraph/3/RayTracer/bin/bin/errs.txt",
 		"/home/dina/mashgraph/3/RayTracer/src/scene.h",
@@ -294,11 +338,8 @@
 		"/home/dina/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
 		"/home/dina/.config/sublime-text-3/Packages/User/Distraction Free.sublime-settings",
 		"/home/dina/mashgraph/3/RayTracer/errs.txt",
-		"/home/dina/mashgraph/3/Kirill/Task3/src/Tracer.cpp",
 		"/home/dina/mashgraph/3/Kirill/Task3/src/Scene.cpp",
-		"/home/dina/mashgraph/3/Kirill/Task3/src/Main.cpp",
 		"/home/dina/mashgraph/3/Kirill/Task3/include/Types.h",
-		"/home/dina/mashgraph/3/Kirill/Task3/include/Tracer.h",
 		"/home/dina/mashgraph/3/Kirill/Task3/include/Scene.h",
 		"/home/dina/mashgraph/3/Kirill/Task3/include/Mesh.h",
 		"/home/dina/mashgraph/3/Kirill/Task3/include/Camera.h",
@@ -409,7 +450,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 7,
 			"sheets":
 			[
 				{
@@ -418,15 +459,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1874,
+						"buffer_size": 2937,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								85,
-								85
+								0,
+								0
 							]
 						],
 						"settings":
@@ -439,11 +480,67 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
+					"file": "scene.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 19,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "scene.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 71,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "camera.h",
 					"semi_transient": false,
 					"settings":
@@ -467,24 +564,52 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "tracer.cpp",
+					"buffer": 4,
+					"file": "glmextra.hpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4500,
+						"buffer_size": 493,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1087,
-								1087
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "tracer.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8300,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
 							]
 						],
 						"settings":
@@ -494,7 +619,7 @@
 								80
 							],
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 8,
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true,
 							"wrap_width": 80
 						},
@@ -502,16 +627,16 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 6,
 					"file": "tracer.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 724,
+						"buffer_size": 981,
 						"regions":
 						{
 						},
@@ -524,36 +649,8 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "types.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 575,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								54,
-								54
-							]
-						],
-						"settings":
-						{
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
+							"tab_size": 8,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -562,88 +659,22 @@
 					},
 					"stack_index": 6,
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 1,
-			"sheets":
-			[
-				{
-					"buffer": 5,
-					"file": "/home/dina/mashgraph/3/Kirill/Task3/src/Tracer.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4278,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								801,
-								801
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 378.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/home/dina/mashgraph/3/Kirill/Task3/include/Tracer.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 677,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								207,
-								207
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 108.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "/home/dina/mashgraph/3/Kirill/Task3/src/Main.cpp",
+					"file": "types.h",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1509,
+						"buffer_size": 809,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								38,
-								38
+								136,
+								136
 							]
 						],
 						"settings":
@@ -656,7 +687,163 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 5,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 4,
+			"sheets":
+			[
+				{
+					"buffer": 8,
+					"file": "/home/dina/mashgraph/3/RayTracer/src/types.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 809,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/home/dina/mashgraph/3/RayTracer/src/tracer.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 981,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 8,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/home/dina/mashgraph/3/RayTracer/src/tracer.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8300,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/home/dina/mashgraph/3/RayTracer/src/main.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2937,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 8,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "/home/dina/mashgraph/3/RayTracer/src/camera.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4843,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -690,7 +877,7 @@
 		"cols":
 		[
 			0.0,
-			0.5,
+			0.211129296236,
 			1.0
 		],
 		"rows":

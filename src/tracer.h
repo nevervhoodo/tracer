@@ -30,8 +30,8 @@ public:
         void SaveImageToFile(std::string fileName);
         CImage* LoadImageFromFile(std::string fileName);
         glm::dvec3 MakeSky (glm::dvec3 ray_pos);
-        bool FoundDisk(SRay ray, glm::dvec3 &color);
-        bool BlackHole(SRay ray);
+        double FoundDisk(SRay ray, glm::dvec3 &color);
+        double BlackHole(SRay ray);
 public:
 	// double len_forward;
         SCamera m_camera;

@@ -44,7 +44,7 @@ dvec3 CTracer::MakeSky (dvec3 ray_pos)
         return dvec3(r,g,b) / 255.0;
 }
 
-bool CTracer::FoundDisk(SRay ray, dvec3 &color)
+double CTracer::FoundDisk(SRay ray, dvec3 &color)
 {
         double dt = -ray.m_start.z/ray.m_dir.z;
         double rad;
@@ -70,28 +70,45 @@ bool CTracer::FoundDisk(SRay ray, dvec3 &color)
                         if (a)
                         {
                                 color = dvec3(r,g,b) / 255.0;
-                                return true;
+                                return dt;
                         }
                 }
         }
-        return false;
+        return -1;
 }
 
-bool CTracer::BlackHole(SRay ray)
+double CTracer::BlackHole(SRay ray)
 {
+        double b,c,d,ht;
         double r1,r2;
-        dvec3 m_fin = ray.m_start + ray.m_dir;
-        r1 = sqrt(ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
-                + ray.m_start.z*ray.m_start.z);
-        
-        r2 = sqrt(m_fin.x*m_fin.x + m_fin.y*m_fin.y + m_fin.z*m_fin.z); 
-        if (((r1>radhole)^(r2>radhole))||(r2<radhole))
-        {
+        b = length (ray.m_dir);//mb -length!!
+        c = dot(ray.m_dir,ray.m_dir) - radhole*radhole;
+        d = b*b - 4*c;//strange official 
+        if (d>=PRECISION)
+        {   
                 cout<<"black here"<<endl;
-                return true;
+                ht = fmin((-b + sqrt(d))/2.0,(-b - sqrt(d))/2.0);
+                if ((ht>-PRECISION)&&(ht<=dtime))
+                {
+                        cout<<"black surely here"<<endl;
+                        return ht;
+                }
         }
-        else
-                return false;
+        return -1;
+        // dvec3 m_fin = ray.m_start + ray.m_dir;
+        // r1 = sqrt(ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
+        //         + ray.m_start.z*ray.m_start.z);
+        
+        // r2 = sqrt(m_fin.x*m_fin.x + m_fin.y*m_fin.y + m_fin.z*m_fin.z); 
+
+        // dvec3 k = ray_pos - spos;
+        // if (((r1>radhole)^(r2>radhole))||(r2<radhole))
+        // {
+        //         cout<<"black here"<<endl;
+        //         return true;
+        // }
+        // else
+        //         return false;  
 }
 
 SRay CTracer::MakeRay(uvec2 pixelPos)
@@ -117,7 +134,6 @@ SRay CTracer::MakeRay(uvec2 pixelPos)
         ray.m_start += x * n_right;
         ray.m_start += y * n_up;
 
-
         ray.m_dir = normalize(ray.m_start);
         ray.m_start += m_camera.m_pos;
         return ray;
@@ -127,7 +143,7 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
 {
         // return ray.m_dir;
         //cout<<"*";
-        double r;
+        double r, ht, dt;
         dvec3 a,an,change;
         dvec3 color = dvec3(0.0,0.0,0.0);
         if (length(ray.m_dir)>PRECISION)
@@ -141,10 +157,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 r = length(ray.m_start);
                 a = -coeff/r/r/r * ray.m_start;
                 an = perp (a,ray.m_dir);
-                //a = perp(ray.m_start*double(-coeff/pow(length(ray.m_start),3)),
-                  //  ray.m_dir);
                 change = dtime*ray.m_dir+an*double(dtime*dtime/2.0);
-                if (length(change)<0.01)
+                if (length(change)<1)
                 {
                         cout << "happy"<<endl;
                         return MakeSky(ray.m_dir);
@@ -156,13 +170,27 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 else
                         cout<<"tracer"<<endl;
                 ray.m_dir *= VC;
-                //ray.m_dir=normalize(ray.m_dir)*double(VC);
+
+                ht = BlackHole(ray);
+                dt = FoundDisk(ray,color);
+                //ray.m_dir=normalize(ray.m_dir)*double(VC); 
+                /*
                 if (BlackHole(ray))
                         return color;
                 if (FoundDisk(ray,color))
-                        return color;  
-                if (r > length(m_camera.m_pos))
-                        return MakeSky(ray.m_dir);     
+                        return color;  */
+                if ((ht>PRECISION)&&(ht<dtime))
+                        if ((dt>PRECISION)&&(dt<dtime))
+                                if (dt<ht)
+                                        return color;
+                                else
+                                        return dvec3(0.0,0.0,0.0);
+                        else
+                                return dvec3(0.0,0.0,0.0);
+                else if ((dt>PRECISION)&&(dt<dtime))
+                        return color;
+                else if (r > length(m_camera.m_pos))
+                        return MakeSky(ray.m_dir+ray.m_start);
         }
         return dvec3(1,0,1);
         //return MakeSky(ray.m_dir);
