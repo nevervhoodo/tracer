@@ -52,6 +52,7 @@ bool CTracer::FoundDisk(SRay ray, dvec3 &color)
         uint i,j;
         if ((dt>PRECISION)&&(dt<=dtime))
         {
+                cout<<"here"<<endl;
                 ray.m_start += ray.m_dir*double(dt);
                 rad = sqrt(ray.m_start.x*ray.m_start.x + 
                         ray.m_start.y*ray.m_start.y); 
@@ -79,19 +80,23 @@ bool CTracer::FoundDisk(SRay ray, dvec3 &color)
 bool CTracer::BlackHole(SRay ray)
 {
         double r1,r2;
-        r1 = ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
-                + ray.m_start.z*ray.m_start.z;
-        ray.m_start += ray.m_dir;
-        r2 = ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
-                + ray.m_start.z*ray.m_start.z; 
-        if ((r1>radhole)^(r2>radhole))
+        dvec3 m_fin = ray.m_start + ray.m_dir;
+        r1 = sqrt(ray.m_start.x*ray.m_start.x + ray.m_start.y*ray.m_start.y 
+                + ray.m_start.z*ray.m_start.z);
+        
+        r2 = sqrt(m_fin.x*m_fin.x + m_fin.y*m_fin.y + m_fin.z*m_fin.z); 
+        if (((r1>radhole)^(r2>radhole))||(r2<radhole))
+        {
+                cout<<"black here"<<endl;
                 return true;
+        }
         else
                 return false;
 }
 
 SRay CTracer::MakeRay(uvec2 pixelPos)
 {
+        //cout<<"evrika"<<endl;
         double ppx = double(pixelPos.x) - m_camera.m_resolution.x / 2.0;
         double ppy = double(pixelPos.y) - m_camera.m_resolution.y / 2.0;
 
@@ -121,34 +126,43 @@ SRay CTracer::MakeRay(uvec2 pixelPos)
 glm::dvec3 CTracer::TraceRay(SRay ray)
 {
         // return ray.m_dir;
-
-        dvec3 a,v,change;
+        //cout<<"*";
+        double r;
+        dvec3 a,an,change;
         dvec3 color = dvec3(0.0,0.0,0.0);
         if (length(ray.m_dir)>PRECISION)
                 ray.m_dir = normalize(ray.m_dir);
         else
                 cout<<"tracer0"<<endl;
-        for (int iter;iter<100000;iter++)
-        //for (;;)
+        ray.m_dir *= VC;
+        //for (int iter;iter<10000;iter++)
+        for (;;)
         {
-                a = perp(ray.m_start*double(coeff/pow(length(ray.m_start),3)),
-                    ray.m_dir);
-                change = ray.m_dir*double(dtime)+a*double(dtime*dtime/2.0);
+                r = length(ray.m_start);
+                a = -coeff/r/r/r * ray.m_start;
+                an = perp (a,ray.m_dir);
+                //a = perp(ray.m_start*double(-coeff/pow(length(ray.m_start),3)),
+                  //  ray.m_dir);
+                change = dtime*ray.m_dir+an*double(dtime*dtime/2.0);
                 if (length(change)<0.01)
                 {
-                        return MakeSky(ray.m_dir+ray.m_start);
+                        cout << "happy"<<endl;
+                        return MakeSky(ray.m_dir);
                 }
                 ray.m_start+=change;
-                ray.m_dir+=a*double(dtime);
+                ray.m_dir+=dtime*an;
                 if (length(ray.m_dir)>PRECISION)
                         ray.m_dir = normalize(ray.m_dir);
                 else
                         cout<<"tracer"<<endl;
-                ray.m_dir=normalize(ray.m_dir)*double(VC);
+                ray.m_dir *= VC;
+                //ray.m_dir=normalize(ray.m_dir)*double(VC);
                 if (BlackHole(ray))
                         return color;
                 if (FoundDisk(ray,color))
-                        return color;       
+                        return color;  
+                if (r > length(m_camera.m_pos))
+                        return MakeSky(ray.m_dir);     
         }
         return dvec3(1,0,1);
         //return MakeSky(ray.m_dir);

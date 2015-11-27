@@ -21,7 +21,7 @@ class CTracer
 	CImage stars, disk;
 	double mass, raddisk, radhole;
 	double coeff;
-	double dtime = 200.0;
+	double dtime = 1.0;
         uint diskrad;
 public:
         SRay MakeRay(glm::uvec2 pixelPos);  // Create ray for specified pixel
