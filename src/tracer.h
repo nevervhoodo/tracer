@@ -23,6 +23,7 @@ class CTracer
 	double coeff;
 	double dtime;
         uint diskrad;
+        bool early = true;
 public:
         SRay MakeRay(glm::uvec2 pixelPos);  // Create ray for specified pixel
         glm::dvec3 TraceRay(SRay ray); // Trace ray, compute its color

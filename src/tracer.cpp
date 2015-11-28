@@ -80,13 +80,15 @@ double CTracer::FoundDisk(SRay ray, dvec3 &color)
                         uint8_t r = disk(j, i, 0);
                         uint8_t g = disk(i, j, 1);
                         uint8_t b = disk(i, j, 2);
-                        //uint8_t a = disk(i, j, 3);
-                        //if (a)
-                        //{
+                        // if ((!r)&&(!g)&&(!b))
+                        //         return -1;
+                        uint8_t a = disk(i, j, 3);
+                        if (a<255)
+                        {
                                 //printf("ssssssssss\n");
                                 color = dvec3(r,g,b) / 255.0;
                                 return dt;
-                        //}
+                        }
                 }
         }
         return -1;
@@ -158,6 +160,7 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
         // return ray.m_dir;
         //cout<<"*"<<endl;
         double r, ht, dt;
+        bool early = true;
         dvec3 a,an,change;
         dvec3 color = dvec3(0.0,0.0,0.0);
         if (length(ray.m_dir)>PRECISION)
@@ -174,11 +177,16 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                     cout<<"a= "<<a.x<<" "<<a.y<<" "<<a.z<<endl;
                 an = perp (a,ray.m_dir);
                 change = dtime*ray.m_dir+an*double(dtime*dtime/2.0);
-                /*if (length(change)<PRECISION*length(ray.m_start))
+                //cout<<length(dtime*an)<<endl;
+                //cout <<dot(m_camera.m_pos,ray.m_start)<<endl;
+                if (early)
+                        if (dot(ray.m_start,m_camera.m_forward)>PRECISION)
+                                early = false;
+                if ((!early)&&(length(dtime*an)<10000))
                 {
-                        cout << "happy"<<endl;
+                        //cout << "happy"<<endl;
                         return MakeSky(ray.m_dir);
-                }*/
+                }
                 ray.m_start+=change;
                 ray.m_dir+=dtime*an;
                 if (length(ray.m_dir)>PRECISION)
@@ -200,15 +208,24 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 if ((ht>PRECISION)&&(ht<dtime))
                         if ((dt>PRECISION)&&(dt<dtime))
                                 if (dt<ht)
+                                {
+                                        early = false;
                                         return color;
+                                }
                                 else
+                                {
+                                        early = false;
                                         return dvec3(0.0,0.0,0.0);
+                                }
                         else
+                        {
+                                early = false;
                                 return dvec3(0.0,0.0,0.0);
+                        }
                 else if ((dt>PRECISION)&&(dt<dtime))
                         return color;
-                else if (r > length(m_camera.m_pos)*2)
-                        return MakeSky(ray.m_dir);
+                // else if (r > length(m_camera.m_pos)*2)
+                //         return MakeSky(ray.m_dir);
         }
         return dvec3(1,0,1);
         //return MakeSky(ray.m_dir);
