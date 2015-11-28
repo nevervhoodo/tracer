@@ -23,7 +23,7 @@ void print(SRay ray)
         "; "<<ray.m_dir.x<<" "<<ray.m_dir.y<<" "<<ray.m_dir.z<<endl;
 }
 
-dvec3 CTracer::MakeSky (dvec3 ray_pos)
+dvec3 CTracer::MakeSky (dvec3 ray_pos, double alpha)
 {
         if (length(ray_pos)>PRECISION)
                 ray_pos = normalize(ray_pos);
@@ -53,10 +53,10 @@ dvec3 CTracer::MakeSky (dvec3 ray_pos)
         uint8_t g = stars(phi, teta, 1);
         uint8_t b = stars(phi, teta, 2);
         //uint8_t a = stars(j, i, 3);
-        return dvec3(r,g,b) / 255.0;
+        return dvec3(r,g,b) * (1-alpha) / 255.0;
 }
 
-double CTracer::FoundDisk(SRay ray, dvec3 &color)
+double CTracer::FoundDisk(SRay ray, dvec3 &color, double &alpha)
 {
         double dt = -ray.m_start.z/ray.m_dir.z;
         double rad;
@@ -83,12 +83,15 @@ double CTracer::FoundDisk(SRay ray, dvec3 &color)
                         // if ((!r)&&(!g)&&(!b))
                         //         return -1;
                         uint8_t a = disk(i, j, 3);
-                        if (a<255)
-                        {
-                                //printf("ssssssssss\n");
-                                color = dvec3(r,g,b) / 255.0;
-                                return dt;
-                        }
+                        alpha = a/255.0;
+                        color = dvec3(r,g,b) * alpha / 255.0;
+                        //         return dt;
+                        // if (a)
+                        // {
+                        //         //printf("ssssssssss\n");
+                        //         color = dvec3(r,g,b) / 255.0;
+                        //         return dt;
+                        // }
                 }
         }
         return -1;
@@ -161,6 +164,7 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
         //cout<<"*"<<endl;
         double r, ht, dt;
         bool early = true;
+        double alpha = 0;
         dvec3 a,an,change;
         dvec3 color = dvec3(0.0,0.0,0.0);
         if (length(ray.m_dir)>PRECISION)
@@ -185,7 +189,7 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 if ((!early)&&(length(dtime*an)<10000))
                 {
                         //cout << "happy"<<endl;
-                        return MakeSky(ray.m_dir);
+                        return MakeSky(ray.m_dir,alpha) + color;
                 }
                 ray.m_start+=change;
                 ray.m_dir+=dtime*an;
@@ -198,32 +202,39 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                     print(ray);
 
                 ht = BlackHole(ray);
-                dt = FoundDisk(ray,color);
+                dt = FoundDisk(ray,color,alpha);
                 //ray.m_dir=normalize(ray.m_dir)*double(VC); 
                 /*
                 if (BlackHole(ray))
                         return color;
                 if (FoundDisk(ray,color))
                         return color;  */
-                if ((ht>PRECISION)&&(ht<dtime))
-                        if ((dt>PRECISION)&&(dt<dtime))
-                                if (dt<ht)
-                                {
-                                        early = false;
-                                        return color;
-                                }
-                                else
-                                {
-                                        early = false;
-                                        return dvec3(0.0,0.0,0.0);
-                                }
-                        else
-                        {
-                                early = false;
-                                return dvec3(0.0,0.0,0.0);
-                        }
-                else if ((dt>PRECISION)&&(dt<dtime))
+                if ((dt>PRECISION)&&(dt<dtime)&&(alpha<PRECISION))
+                {
                         return color;
+                }
+                if ((ht>PRECISION)&&(ht<dtime))
+                {
+                        return color;
+                }
+                //         if ((dt>PRECISION)&&(dt<dtime))
+                //                 if (dt<ht)
+                //                 {
+                //                         early = false;
+                //                         return color;
+                //                 }
+                //                 else
+                //                 {
+                //                         early = false;
+                //                         return dvec3(0.0,0.0,0.0);
+                //                 }
+                //         else
+                //         {
+                //                 early = false;
+                //                 return dvec3(0.0,0.0,0.0);
+                //         }
+                // else if ((dt>PRECISION)&&(dt<dtime))
+                //         return color;
                 // else if (r > length(m_camera.m_pos)*2)
                 //         return MakeSky(ray.m_dir);
         }
@@ -242,7 +253,7 @@ void CTracer::RenderImage(int xRes, int yRes)
         raddisk = radhole * m_camera.disksize;//!CONFIG
         dtime = 10.0;
 
-        disk = CImage("data/disk_24.png");
+        disk = CImage("data/disk_32.png");
         diskrad = fmin(disk.height(),disk.width())/2;
         stars = CImage("data/stars.jpg");
         /*for (int i = 0; i < img.height(); i++) { // Image lines

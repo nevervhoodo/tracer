@@ -23,15 +23,14 @@ class CTracer
 	double coeff;
 	double dtime;
         uint diskrad;
-        bool early = true;
 public:
         SRay MakeRay(glm::uvec2 pixelPos);  // Create ray for specified pixel
         glm::dvec3 TraceRay(SRay ray); // Trace ray, compute its color
         void RenderImage(int xRes, int yRes);
         void SaveImageToFile(std::string fileName);
         CImage* LoadImageFromFile(std::string fileName);
-        glm::dvec3 MakeSky (glm::dvec3 ray_pos);
-        double FoundDisk(SRay ray, glm::dvec3 &color);
+        glm::dvec3 MakeSky (glm::dvec3 ray_pos,double alpha = 1);
+        double FoundDisk(SRay ray, glm::dvec3 &color,double &alpha);
         double BlackHole(SRay ray);
 public:
 	// double len_forward;
