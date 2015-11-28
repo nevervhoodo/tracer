@@ -2,6 +2,7 @@
 #include "glmextra.hpp"
 
 #include <iostream>
+#include <vector>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -11,6 +12,8 @@ using namespace std;
 #define DEBUG false
 #define DEBUG2 false
 #define ARAY false
+#define ANTIAL 2.0
+
 
 void print (dvec3 v)
 {
@@ -99,7 +102,7 @@ double CTracer::FoundDisk(SRay ray, dvec3 &color, double &alpha)
 
 double CTracer::BlackHole(SRay ray)
 {
-        double b,c,d,ht;
+        //double b,c,d,ht;
         double r1,r2;
         // b = length (ray.m_dir) * length (ray.m_dir);//mb -length!!
         // c = dot(ray.m_dir,ray.m_dir) - radhole*radhole;
@@ -130,32 +133,41 @@ double CTracer::BlackHole(SRay ray)
                 return -1;  
 }
 
-SRay CTracer::MakeRay(uvec2 pixelPos)
+void CTracer::MakeRay(uvec2 pixelPos, vector<SRay> *rays)
 {
         //cout<<"evrika"<<endl;
         double ppx = double(pixelPos.x) - m_camera.m_resolution.x / 2.0;
         double ppy = double(pixelPos.y) - m_camera.m_resolution.y / 2.0;
-
+//coordinates from -size/2 to size/2
+        //vector<SRay> rays;
         dvec3 n_forw, n_up, n_right;
-        SRay ray;
+        //SRay ray;
         
         n_up = normalize(m_camera.m_up);
         n_right = normalize(m_camera.m_right);
         double x = 2.0 * length(m_camera.m_forward) * 
-            tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
+                tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
         double y = 2.0 * length(m_camera.m_forward) * 
-            tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
+                tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
+        //cout<<rays->size()<<endl;
+        uint c = 0;
+        float d = float(1/ANTIAL);
+        for (float i=d/2.0;i<1;i+=d)
+        {
+                for (float j=d/2.0;j<1;j+=d)
+                {
+                        x *= j + ppx;
+                        y *= i + ppy;
 
-        x *= 0.5 + ppx;
-        y *= 0.5 + ppy;
+                        (*rays)[c].m_start = m_camera.m_forward;
+                        (*rays)[c].m_start += x * n_right;
+                        (*rays)[c].m_start += y * n_up;
 
-        ray.m_start = m_camera.m_forward;
-        ray.m_start += x * n_right;
-        ray.m_start += y * n_up;
-
-        ray.m_dir = normalize(ray.m_start);
-        ray.m_start += m_camera.m_pos;
-        return ray;
+                        (*rays)[c].m_dir = normalize((*rays)[c].m_start);
+                        (*rays)[c].m_start += m_camera.m_pos;
+                        c++;
+                }
+        }
 }
 
 glm::dvec3 CTracer::TraceRay(SRay ray)
@@ -256,6 +268,19 @@ void CTracer::RenderImage(int xRes, int yRes)
         disk = CImage("data/disk_32.png");
         diskrad = fmin(disk.height(),disk.width())/2;
         stars = CImage("data/stars.jpg");
+        
+        rays.resize(ANTIAL*ANTIAL);
+        for (uint c=0;c<ANTIAL*ANTIAL;c++)
+            rays[c].m_start=rays[c].m_dir=dvec3(0.0,0.0,0.0);
+        // SRay ray;
+        // ray.m_start = dvec3(0.0,0.0,0.0);
+        // ray.m_dir = dvec3(0.0,0.0,0.0);
+        // for (uint c=0;c<ANTIAL2;c++)
+        // {
+        //         rays.push_back(ray);
+        // }
+
+        //uint antial = 2;
         /*for (int i = 0; i < img.height(); i++) { // Image lines
                 for(int j = 0; j < img.width(); j++) { // Pixels in line
                         uint8_t r = img(j, i, 0);
@@ -269,11 +294,24 @@ void CTracer::RenderImage(int xRes, int yRes)
         //m_camera.m_resolution = uvec2(xRes, yRes);
         //m_camera.m_pixels.resize(xRes * yRes);
 
+        // for (int i = 0; i < yRes; i++) {
+        //         for (int j = 0; j < xRes; j++) {
+        //                 SRay ray = MakeRay(uvec2(j, i));
+        //                 m_camera.m_pixels[i * xRes + j] = TraceRay(ray);
+        //                 //cout << m_camera.m_pixels[i * xRes + j]<<endl;
+        //         }
+        //         if (!(i%20))
+        //                 cout<<"*"<<endl;
+        // }
         for (int i = 0; i < yRes; i++) {
                 for (int j = 0; j < xRes; j++) {
-                        SRay ray = MakeRay(uvec2(j, i));
-                        m_camera.m_pixels[i * xRes + j] = TraceRay(ray);
+                        MakeRay(uvec2(j, i),&rays);
+                        m_camera.m_pixels[i * xRes + j] = dvec3(0.0,0.0,0.0);
+                        for (uint step=0;step<ANTIAL*ANTIAL;step++)
+                                m_camera.m_pixels[i * xRes + j] +=
+                                        TraceRay(rays[step]);
                         //cout << m_camera.m_pixels[i * xRes + j]<<endl;
+                        m_camera.m_pixels[i * xRes + j] /= ANTIAL;
                 }
                 if (!(i%20))
                         cout<<"*"<<endl;
@@ -290,7 +328,7 @@ void CTracer::SaveImageToFile(std::string fileName)
         //unsigned char* imageBuffer = (unsigned char*)image.data();
 
         int i, j;
-        int imageDisplacement = 0;
+        //int imageDisplacement = 0;
         int textureDisplacement = 0;
 
         for (i = 0; i < height; i++) {

@@ -10,6 +10,7 @@ struct SRay
 {
   glm::dvec3 m_start;
   glm::dvec3 m_dir;
+  SRay () {m_start=glm::dvec3(0.0,0.0,0.0);m_dir=glm::dvec3(0.0,0.0,0.0);}
 };
 
 struct SCamera
