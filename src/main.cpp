@@ -48,6 +48,7 @@ int main(int argc, char** argv)
 // -1 0 20
 // 0 -1 0
 // 60 33.75
+        printf("argc %d\r\n",argc);
         if(argc == 2) // There is input file in parameters
         {
                 FILE* file = fopen(argv[1], "r");

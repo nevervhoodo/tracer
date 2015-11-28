@@ -37,8 +37,8 @@ void SCamera::CheckBasis()
         throw 'b';
     if (dot(m_forward, m_right)>PRECISION)
         throw 'c'; 
-    m_up = normalize (m_up);   
-    m_right = normalize (m_right);
+    //m_up = normalize (m_up);   
+    //m_right = normalize (m_right);
 }
 
 void SCamera::CheckResolution(int x, int y)
@@ -64,7 +64,7 @@ void SCamera::DefaultInit()
 {
     //Defaiul settings
     m_pos = dvec3(3e+11,0.0,2e+10);          // Camera position and orientation
-    m_forward = dvec3(-20,0.0,1.0);      // Orthonormal basis
+    m_forward = dvec3(-20,0.0,0.0);      // Orthonormal basis
     m_right = dvec3(0.0,10.0,0.0);
     //cout<<m_right.x<<" "<<m_right.y<<" "<<m_right.z<<endl;
     m_up = dvec3(0.0,0.0,-10.0); 
@@ -72,6 +72,7 @@ void SCamera::DefaultInit()
     m_viewAngle = dvec2(30.0/180.0*M_PI,30.0/180.0*M_PI);    // View angles, rad
     m_resolution = uvec2(500,500);  // Default resolutio
     m_pixels.resize(m_resolution.x*m_resolution.y);  // Pixel array
+    disksize = 7;
 }
 
 void SCamera::ParseSettings(FILE *file)
@@ -80,6 +81,9 @@ void SCamera::ParseSettings(FILE *file)
     Size of the output image is X*Y
     input x:
     input y:
+    ---------------------------------
+    Size of the disk: it is n times wider than black hole
+    input n:
     ---------------------------------
     Camera position: {x,y,z}
     input x:
@@ -94,63 +98,69 @@ void SCamera::ParseSettings(FILE *file)
     Camera angle (degrees): up, right
     input up:
     input right:
-*/
+    */
     try
     {
         IgnoreLine(file);
         int n_x, n_y;
         double x,y,z;
-        if(fscanf(file, "input x: %d", &n_x) == 1) 
+        if(fscanf(file, "input x: %d\n", &n_x) == 1) 
             m_resolution.x = n_x;
         else
             throw 2;
-        if(fscanf(file, "input y: %d", &n_y) == 1) 
+        if(fscanf(file, "input y: %d\n", &n_y) == 1) 
             m_resolution.y = n_y;
         else
             throw 3;
         IgnoreLine(file);
         IgnoreLine(file);
-        if(fscanf(file, "input x: %lf", &x) == 1) 
-            m_pos.x = x;
+        if(fscanf(file, "input n: %lf\n", &x) == 1) 
+            disksize = x;
         else
             throw 6;
-        if(fscanf(file, "input y: %lf", &y) == 1) 
+        IgnoreLine(file);
+        IgnoreLine(file);
+        if(fscanf(file, "input x: %le\n", &x) == 1) 
+            m_pos.x = x;
+        else
+            throw 9;
+        if(fscanf(file, "input y: %le\n", &y) == 1) 
             m_pos.y = y;
         else
-            throw 7;
-        if(fscanf(file, "input z: %lf", &z) == 1) 
+            throw 10;
+        if(fscanf(file, "input z: %le\n", &z) == 1) 
             m_pos.z = z;
         else
-            throw 8;
+            throw 11;
         IgnoreLine(file);
         IgnoreLine(file);
-        if(fscanf(file, "input up: {%lf,%lf,%lf}", &x,&y,&z) == 3) 
+        if(fscanf(file, "input up: {%le,%le,%le}\n", &x,&y,&z) == 3) 
             m_up = dvec3(x,y,z);
         else
-            throw 11;
-        if(fscanf(file, "input right: {%lf,%lf,%lf}", &x,&y,&z) == 3) 
+            throw 14;
+        if(fscanf(file, "input right: {%le,%le,%le}\n", &x,&y,&z) == 3) 
             m_right = dvec3(x,y,z);
         else
-            throw 12;
-        if(fscanf(file, "input forward: {%lf,%lf,%lf}", &x,&y,&z) == 3) 
+            throw 15;
+        if(fscanf(file, "input forward: {%le,%le,%le}\n", &x,&y,&z) == 3) 
             m_forward = dvec3(x,y,z);
         else
-            throw 13;
+            throw 16;
         CheckBasis();
         IgnoreLine(file);
         IgnoreLine(file);
-        if(fscanf(file, "input up: %lf", &x) == 1) 
-            if ((x<=360)&&(x>PRECISION))
+        if(fscanf(file, "input up: %lf\n", &x) == 1) 
+            if ((x<90)&&(x>PRECISION))
                 m_viewAngle.y = x/180*M_PI;
-            else throw "tangle should be if [0..360]";
+            else throw "angle should be in (0..90)";
         else
-            throw 16;
-        if(fscanf(file, "input right: %lf", &y) == 1) 
-            if ((y<=360)&&(y>PRECISION))
+            throw 19;
+        if(fscanf(file, "input right: %lf\n", &y) == 1) 
+            if ((y<90)&&(y>PRECISION))
                 m_viewAngle.x = y/180*M_PI;
-            else throw "tangle should be if [0..360]";
+            else throw "angle should be in (0..90)";
         else
-            throw 17;
+            throw 20;
         //CheckSize();
         m_pixels.resize(m_resolution.x*m_resolution.y);  // Pixel array
     }
@@ -165,7 +175,7 @@ void SCamera::ParseSettings(FILE *file)
     {
         DefaultInit();
         cout<<"Invalid config format! Using default parameters"<<endl<<
-            "Error in line"<<num<<endl;
+            "Error in line "<<num<<endl;
     }
     catch (const char *s)
     {
