@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 //double a[N], b[N], c[N];
 // int i;
 omp_set_dynamic(0);      
-omp_set_num_threads(10); 
+omp_set_num_threads(4); 
 
         CTracer tracer;
         CScene scene;
