@@ -6,7 +6,7 @@ Size of the disk: it is n times wider than black hole
 input n: 8.0
 ---------------------------------
 Camera position: {x,y,z}
-input x: 2e+11
+input x: 9e+10
 input y: 0.0
 input z: 2e+10
 ---------------------------------

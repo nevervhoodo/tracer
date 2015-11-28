@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <omp.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -145,10 +146,6 @@ void CTracer::MakeRay(uvec2 pixelPos, vector<SRay> *rays)
         
         n_up = normalize(m_camera.m_up);
         n_right = normalize(m_camera.m_right);
-        double x = 2.0 * length(m_camera.m_forward) * 
-                tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
-        double y = 2.0 * length(m_camera.m_forward) * 
-                tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
         //cout<<rays->size()<<endl;
         uint c = 0;
         float d = float(1/ANTIAL);
@@ -156,6 +153,10 @@ void CTracer::MakeRay(uvec2 pixelPos, vector<SRay> *rays)
         {
                 for (float j=d/2.0;j<1;j+=d)
                 {
+                        double x = 2.0 * length(m_camera.m_forward) * 
+                                tan(m_camera.m_viewAngle.x) / m_camera.m_resolution.x;
+                        double y = 2.0 * length(m_camera.m_forward) * 
+                                tan(m_camera.m_viewAngle.y) / m_camera.m_resolution.y;
                         x *= j + ppx;
                         y *= i + ppy;
 
@@ -185,7 +186,9 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 cout<<"tracer0"<<endl;
         ray.m_dir *= VC;
         //for (int iter;iter<1000;iter++)
-        for (;;)
+        long int kmax = 1e+10;
+        #pragma omp parallel for
+        for (long int k=0;k<kmax;k++)
         {
                 r = length(ray.m_start);
                 a = -coeff/r/r/r * ray.m_start;
@@ -201,7 +204,8 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 if ((!early)&&(length(dtime*an)<10000))
                 {
                         //cout << "happy"<<endl;
-                        return MakeSky(ray.m_dir,alpha) + color;
+                        color += MakeSky(ray.m_dir,alpha);
+                        kmax = k;
                 }
                 ray.m_start+=change;
                 ray.m_dir+=dtime*an;
@@ -223,11 +227,11 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                         return color;  */
                 if ((dt>PRECISION)&&(dt<dtime)&&(alpha<PRECISION))
                 {
-                        return color;
+                        kmax = k;
                 }
                 if ((ht>PRECISION)&&(ht<dtime))
                 {
-                        return color;
+                        kmax = k;
                 }
                 //         if ((dt>PRECISION)&&(dt<dtime))
                 //                 if (dt<ht)
@@ -250,7 +254,7 @@ glm::dvec3 CTracer::TraceRay(SRay ray)
                 // else if (r > length(m_camera.m_pos)*2)
                 //         return MakeSky(ray.m_dir);
         }
-        return dvec3(1,0,1);
+        return color;
         //return MakeSky(ray.m_dir);
 }
 
@@ -303,11 +307,15 @@ void CTracer::RenderImage(int xRes, int yRes)
         //         if (!(i%20))
         //                 cout<<"*"<<endl;
         // }
+        #pragma omp parallel for
         for (int i = 0; i < yRes; i++) {
+                #pragma omp parallel for
                 for (int j = 0; j < xRes; j++) {
                         MakeRay(uvec2(j, i),&rays);
                         m_camera.m_pixels[i * xRes + j] = dvec3(0.0,0.0,0.0);
-                        for (uint step=0;step<ANTIAL*ANTIAL;step++)
+                        uint size = ANTIAL*ANTIAL;
+                        #pragma omp parallel for
+                        for (uint step=0;step<size;step++)
                                 m_camera.m_pixels[i * xRes + j] +=
                                         TraceRay(rays[step]);
                         //cout << m_camera.m_pixels[i * xRes + j]<<endl;
@@ -330,8 +338,9 @@ void CTracer::SaveImageToFile(std::string fileName)
         int i, j;
         //int imageDisplacement = 0;
         int textureDisplacement = 0;
-
+        #pragma omp parallel for
         for (i = 0; i < height; i++) {
+                #pragma omp parallel for
                 for (j = 0; j < width; j++) {
                         dvec3 color = m_camera.m_pixels[textureDisplacement + j];
                         

@@ -1,10 +1,10 @@
 CXX = g++
 LD = g++
-CXXFLAGS = -g -Wall -O0 -std=c++0x
+CXXFLAGS = -g -Wall -O3 -std=c++0x -fopenmp 
 
 # library includes
 CXXFLAGS += -Dcimg_use_png
-LDFLAGS = -L/usr/X11R6 -lpthread -lX11 -lpng 
+LDFLAGS = -L/usr/X11R6 -lpthread -lX11 -lpng -fopenmp
 
 TARGET = raytracer
 BUILD_DIR = build

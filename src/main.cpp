@@ -1,6 +1,7 @@
 #include "tracer.h"
 #include <cstdio>
 #include <cmath>
+#include <omp.h>
 
 using glm::dvec3;
 using glm::dvec2;
@@ -9,6 +10,13 @@ using glm::length;
 
 int main(int argc, char** argv)
 {
+//#define N 100
+
+//double a[N], b[N], c[N];
+// int i;
+omp_set_dynamic(0);      
+omp_set_num_threads(10); 
+
         CTracer tracer;
         CScene scene;
 
